@@ -11,6 +11,13 @@ course prose and the runnable Web3 research sandbox as one product: examples in
 - `data/`: fixed offline teaching samples.
 - `skills/`: reusable Codex skills taught by the course.
 - `docs/samples/`: small source artifacts used by non-code exercises.
+- `docs/customization.md`: downstream customization boundary and upstream baseline.
+- `docs/maintenance/`: fork synchronization and maintenance runbooks.
+- `docs/templates/`: task briefs and course-to-code mapping templates.
+
+`docs/v2/` and `book/` are private local courseware and are intentionally
+ignored by Git. Their absence in a public checkout is expected. Public product
+code and verification must not depend on them.
 
 ## Working rules
 
@@ -23,6 +30,12 @@ course prose and the runnable Web3 research sandbox as one product: examples in
 - When prose names a file or command, verify that it exists and works.
 - Prefer a small runnable example over a long hypothetical configuration.
 - Do not claim a command passed unless it was actually run.
+- Keep `origin/main` as the stable customized branch. Integrate
+  `upstream/main` through a dedicated sync pull request; never force-push
+  `main` to match upstream.
+- Keep generated data updates separate from source-code and upstream-sync
+  commits. Review the manifest, provenance, completeness, and timestamps
+  before committing a refreshed snapshot.
 
 ## Verification
 

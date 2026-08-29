@@ -21,6 +21,14 @@ type AssistantPosition = {
 
 const PAGE_LABELS: Record<string, string> = {
   "/trading": "市场总览",
+  "/academy": "公益学堂",
+  "/math-learning": "量化数学学堂",
+  "/machine-learning": "机器学习学堂",
+  "/backtest-learning": "回测学堂",
+  "/risk-learning": "风控学堂",
+  "/kline-learning": "K线学堂",
+  "/diagnosis-learning": "诊断分析学堂",
+  "/asset-management-learning": "资产管理学堂",
   "/radar": "机会雷达",
   "/factor-mining": "因子挖掘",
   "/backtests": "策略回测",

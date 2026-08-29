@@ -10,7 +10,23 @@ import MainLayout from "./layouts/MainLayout";
 
 import BacktestsPage from "./pages/trading/BacktestsPage";
 
+import BacktestLearningPage from "./pages/learning/BacktestLearningPage";
+
+import AssetManagementLearningPage from "./pages/learning/AssetManagementLearningPage";
+
 import DashboardPage from "./pages/trading/DashboardPage";
+
+import AcademyPage from "./pages/learning/AcademyPage";
+
+import DiagnosisLearningPage from "./pages/learning/DiagnosisLearningPage";
+
+import KlineLearningPage from "./pages/learning/KlineLearningPage";
+
+import MathLearningPage from "./pages/learning/MathLearningPage";
+
+import MachineLearningPage from "./pages/learning/MachineLearningPage";
+
+import RiskLearningPage from "./pages/learning/RiskLearningPage";
 
 import DataSourcesPage from "./pages/trading/DataSourcesPage";
 
@@ -48,6 +64,22 @@ export default function App() {
                 <Route path="/dashboard" element={<Navigate to="/trading" replace />} />
 
                 <Route path="/trading" element={<DashboardPage />} />
+
+                <Route path="/academy" element={<AcademyPage />} />
+
+                <Route path="/math-learning" element={<MathLearningPage />} />
+
+                <Route path="/machine-learning" element={<MachineLearningPage />} />
+
+                <Route path="/diagnosis-learning" element={<DiagnosisLearningPage />} />
+
+                <Route path="/asset-management-learning" element={<AssetManagementLearningPage />} />
+
+                <Route path="/backtest-learning" element={<BacktestLearningPage />} />
+
+                <Route path="/risk-learning" element={<RiskLearningPage />} />
+
+                <Route path="/kline-learning" element={<KlineLearningPage />} />
 
                 <Route path="/radar" element={<RadarPage />} />
 
