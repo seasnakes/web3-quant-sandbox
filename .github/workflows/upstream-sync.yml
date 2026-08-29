@@ -1,0 +1,98 @@
+name: Propose Upstream Sync
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '17 2 * * 1'
+
+permissions:
+  contents: write
+  pull-requests: write
+
+concurrency:
+  group: upstream-sync
+  cancel-in-progress: false
+
+env:
+  UPSTREAM_REPOSITORY: congde/web3-quant-sandbox
+  UPSTREAM_BRANCH: main
+  BASE_BRANCH: main
+  SYNC_BRANCH: automation/upstream-sync
+
+jobs:
+  propose:
+    if: github.repository == 'seasnakes/web3-quant-sandbox'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+
+      - name: Prepare upstream synchronization pull request
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+
+          upstream_url="https://github.com/${UPSTREAM_REPOSITORY}.git"
+          if git remote get-url upstream >/dev/null 2>&1; then
+            git remote set-url upstream "${upstream_url}"
+          else
+            git remote add upstream "${upstream_url}"
+          fi
+          git remote set-url --push upstream DISABLED
+
+          git fetch origin "${BASE_BRANCH}" --prune
+          git fetch upstream "${UPSTREAM_BRANCH}" --prune
+
+          if git merge-base --is-ancestor "upstream/${UPSTREAM_BRANCH}" "origin/${BASE_BRANCH}"; then
+            echo 'No upstream commits are waiting to be integrated.' >> "${GITHUB_STEP_SUMMARY}"
+            exit 0
+          fi
+
+          git switch -C "${SYNC_BRANCH}" "origin/${BASE_BRANCH}"
+          if ! git merge --no-edit "upstream/${UPSTREAM_BRANCH}"; then
+            git merge --abort
+            {
+              echo '## Upstream synchronization needs manual conflict resolution'
+              echo
+              echo "Base: \`origin/${BASE_BRANCH}\`"
+              echo "Upstream: \`upstream/${UPSTREAM_BRANCH}\`"
+            } >> "${GITHUB_STEP_SUMMARY}"
+            exit 1
+          fi
+
+          upstream_sha="$(git rev-parse "upstream/${UPSTREAM_BRANCH}")"
+          git push --force-with-lease origin "HEAD:refs/heads/${SYNC_BRANCH}"
+
+          existing_pr="$(gh pr list \
+            --repo "${GITHUB_REPOSITORY}" \
+            --base "${BASE_BRANCH}" \
+            --head "${SYNC_BRANCH}" \
+            --state open \
+            --json number \
+            --jq '.[0].number // empty')"
+
+          if [[ -z "${existing_pr}" ]]; then
+            body_file="$(mktemp)"
+            {
+              echo 'Automated proposal to integrate the latest course-project changes.'
+              echo
+              echo "- Upstream: \`${UPSTREAM_REPOSITORY}@${upstream_sha}\`"
+              echo "- Base: \`${BASE_BRANCH}\`"
+              echo '- Merge policy: review the diff and require Repository Check before merging.'
+              echo '- Safety: this workflow never merges or force-pushes the base branch.'
+            } > "${body_file}"
+            gh pr create \
+              --repo "${GITHUB_REPOSITORY}" \
+              --base "${BASE_BRANCH}" \
+              --head "${SYNC_BRANCH}" \
+              --title 'chore: sync upstream course project' \
+              --body-file "${body_file}"
+          else
+            echo "Updated existing upstream-sync PR #${existing_pr}." >> "${GITHUB_STEP_SUMMARY}"
+          fi

@@ -1,4 +1,5 @@
 # Local generated files that should not be committed
+.DS_Store
 /book/
 /docs/v2/
 outputs/

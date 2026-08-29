@@ -8,6 +8,8 @@
 
 > 如果这个项目帮助你学习 Web3 量化、回测工程或 Codex 课程流程，欢迎 Star。想接入自己的数据源、改策略或搭建私有研究面板，可以 Fork 后继续扩展。
 
+Fork 后长期维护时，请从功能分支向自己的 `main` 提交定制，并通过同步 PR 引入作者更新。仓库内的[定制说明](docs/customization.md)和[上游同步手册](docs/maintenance/upstream-sync.md)记录了分支、自动化、冲突处理与验收边界。
+
 ## 项目亮点
 
 - **离线优先**：内置 `data/dashboard/*.json` 样本，断网也能打开核心页面。
